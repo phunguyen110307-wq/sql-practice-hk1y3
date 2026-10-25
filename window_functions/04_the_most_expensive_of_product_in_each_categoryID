@@ -1,0 +1,22 @@
+--Đề  [Cơ bản] Với mỗi danh mục, liệt kê sản phẩm có đơn giá cao nhất 
+--Cách nghĩ: dùng CTE + ROW_NUMBER() + PARTITION BY / ORDER BY
+--Chỗ sai: sai về logic nghiệp vụ (data logic), đề chỉ hỏi ở bảng Products (UnitPrice) nhưng lúc làm lỡ join vs OrderDetails
+WITH RankedProducts AS (
+    SELECT 
+        CategoryID,
+        ProductID,
+        ProductName,
+        UnitPrice,
+        ROW_NUMBER() OVER (
+            PARTITION BY CategoryID 
+            ORDER BY UnitPrice DESC
+        ) AS RankNum
+    FROM [dbo].[Products]
+)
+SELECT 
+    CategoryID,
+    ProductID,
+    ProductName,
+    UnitPrice
+FROM RankedProducts
+WHERE RankNum = 1;
